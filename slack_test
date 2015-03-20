@@ -1,0 +1,27 @@
+#!/usr/bin/env python3
+## -*- coding: utf-8 -*-
+from slacker import Slacker
+from pprint import pprint
+from datetime import datetime
+from pytz import timezone
+import pytz
+
+slack = Slacker(get_from_config_file)
+
+# Send a message to #general channel
+#slack.chat.post_message('#dev-chatter', 'Hello fellow duhvelpers!')
+
+# Get users list
+response = slack.users.list()
+users = response.body['members']
+fmt = "%a, %d %b %Y %X"
+
+utc = pytz.utc
+
+for user in users:
+    if user['name'] == 'gale_kautsuo':
+        user_tz = timezone(user['tz'])
+        utc_dt = datetime.utcnow()
+        utc_dt = pytz.utc.localize(utc_dt)
+        loc_dt = utc_dt.astimezone(user_tz)
+        slack.chat.post_message('#aba', '@{name}: The EVE time is {utc} and in {tz}: {local}'.format(name=user['name'], tz=user['tz'], utc=utc_dt.strftime(fmt), local=loc_dt.strftime(fmt)), username="PandaBot", icon_url="http://aba.4amlunch.net/static/icons/animals-panda-bear-icone-5929-48.png")
