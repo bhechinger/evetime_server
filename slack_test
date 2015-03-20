@@ -4,9 +4,26 @@ from slacker import Slacker
 from pprint import pprint
 from datetime import datetime
 from pytz import timezone
-import pytz
+import pytz, argparse, configparser
 
-slack = Slacker(get_from_config_file)
+parser = argparse.ArgumentParser(description='Send time in UTC plus conversion to requesting user\'s timezone')
+parser.add_argument('-c', '--config', help='Config file [default is slack.conf in current dir]')
+parser.add_argument('-d', '--debug', help='print debug output', action="store_true")
+args = parser.parse_args()
+
+if args.config:
+    config_file = args.config
+else:
+    config_file = 'slack.conf'
+
+config = configparser.ConfigParser()
+config.read(config_file)
+
+api_key = config.get('slack', 'api_key')
+bot_name = config.get('bot', 'name')
+bot_icon = config.get('bot', 'icon')
+
+slack = Slacker(api_key)
 
 # Send a message to #general channel
 #slack.chat.post_message('#dev-chatter', 'Hello fellow duhvelpers!')
@@ -24,4 +41,4 @@ for user in users:
         utc_dt = datetime.utcnow()
         utc_dt = pytz.utc.localize(utc_dt)
         loc_dt = utc_dt.astimezone(user_tz)
-        slack.chat.post_message('#aba', '@{name}: The EVE time is {utc} and in {tz}: {local}'.format(name=user['name'], tz=user['tz'], utc=utc_dt.strftime(fmt), local=loc_dt.strftime(fmt)), username="PandaBot", icon_url="http://aba.4amlunch.net/static/icons/animals-panda-bear-icone-5929-48.png")
+        slack.chat.post_message('#dev-chatter', '@{name}: The EVE time is {utc} and in {tz}: {local}'.format(name=user['name'], tz=user['tz'], utc=utc_dt.strftime(fmt), local=loc_dt.strftime(fmt)), username=bot_name, icon_url=bot_icon)

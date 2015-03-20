@@ -1,2 +1,6 @@
-[general]
-api_key = 'PUT_YOUR_SLACK_KEY_HERE'
+[slack]
+api_key = PUT_YOUR_SLACK_KEY_HERE
+
+[bot]
+name = PUT_YOUR_BOT_NAME_HERE
+icon = PUT_YOUR_ICON_URL_HERE
