@@ -36,10 +36,9 @@ fmt = "%a, %d %b %Y %X"
 utc = pytz.utc
 
 for user in users:
-    if user['name'] == 'gale_kautsuo':
-        pprint(user)
-#        user_tz = timezone(user['tz'])
-#        utc_dt = datetime.utcnow()
-#        utc_dt = pytz.utc.localize(utc_dt)
-#        loc_dt = utc_dt.astimezone(user_tz)
-#        slack.chat.post_message('#dev-chatter', '@{name}: The EVE time is {utc} and in {tz}: {local}'.format(name=user['name'], tz=user['tz'], utc=utc_dt.strftime(fmt), local=loc_dt.strftime(fmt)), username=bot_name, icon_url=bot_icon)
+    if user['name'] == 'wonko':
+        user_tz = timezone(user['tz'])
+        utc_dt = datetime.utcnow()
+        utc_dt = pytz.utc.localize(utc_dt)
+        loc_dt = utc_dt.astimezone(user_tz)
+        slack.chat.post_message('#geeks', '@{name}: The EVE time is {utc} and in {tz}: {local}'.format(name=user['name'], tz=user['tz'], utc=utc_dt.strftime(fmt), local=loc_dt.strftime(fmt)), username=bot_name, icon_url=bot_icon)

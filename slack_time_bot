@@ -4,7 +4,7 @@ from flask import Flask, render_template, request
 from slacker import Slacker
 from pprint import pprint
 from datetime import datetime
-from pytz import timezone
+#from pytz import timezone
 import pytz, argparse, configparser, locale
 
 locale.setlocale(locale.LC_ALL, 'en_US')
@@ -29,22 +29,6 @@ bot_icon = config.get('bot', 'icon')
 
 slack = Slacker(api_key)
 
-def send_slack_msg(username):
-    # Get users list
-    response = slack.users.list()
-    users = response.body['members']
-    fmt = "%a, %d %b %Y %X"
-
-    utc = pytz.utc
-
-    for user in users:
-        if user['name'] == username:
-            user_tz = timezone(user['tz'])
-            utc_dt = datetime.utcnow()
-            utc_dt = pytz.utc.localize(utc_dt)
-            loc_dt = utc_dt.astimezone(user_tz)
-            slack.chat.post_message('#dev-chatter', '@{name}: The EVE time is {utc} and in {tz}: {local}'.format(name=user['name'], tz=user['tz_label'], utc=utc_dt.strftime(fmt), local=loc_dt.strftime(fmt)), username=bot_name, icon_url=bot_icon)
-
 @app.route('/')
 def index():
     return "Nothing to see here, move along!"
@@ -53,10 +37,40 @@ def index():
 def time_bot_def():
     return "Please RTFM"
 
-@app.route('/time_bot/<username>')
-def time_bot(username):
-    send_slack_msg(username)
-    return "Sent slack message to {u}".format(u=username)
+@app.route('/time_bot/<req_username>/<req_channel>')
+def time_bot(req_username, req_channel):
+    # Get users list
+    response = slack.users.list()
+    users = response.body['members']
+
+    utc = pytz.utc
+    req_tz = request.args.get('tz', '')
+    req_time = request.args.get('time', '')
+    if req_time:
+        utc_dt = datetime(2015, 1, 1, int(req_time[:-2]), int(req_time[-2:]))
+        fmt = "%H:%M"
+    else:
+        utc_dt = datetime.utcnow()
+        fmt = "%a, %d %b %Y %X"
+
+    for user in users:
+        if user['name'] == req_username:
+            if not req_tz:
+                user_tz = pytz.timezone(user['tz'])
+                dest_tz = user['tz_label']
+            else:
+                if req_tz in pytz.common_timezones:
+                    user_tz = pytz.timezone(req_tz)
+                    dest_tz = req_tz
+                else:
+                    slack.chat.post_message('#{channel}'.format(channel=req_channel), '@{name}: Invalid time zone: {tz}'.format(name=user['name'], tz=req_tz, username=bot_name, icon_url=bot_icon))
+                    return "Sent error message to {u}".format(u=req_username)
+
+            utc_dt = pytz.utc.localize(utc_dt)
+            loc_dt = utc_dt.astimezone(user_tz)
+            slack.chat.post_message('#{channel}'.format(channel=req_channel), '@{name}: The EVE time is {utc} and in {tz}: {local}'.format(name=user['name'], tz=dest_tz, utc=utc_dt.strftime(fmt), local=loc_dt.strftime(fmt)), username=bot_name, icon_url=bot_icon)
+
+    return "Sent slack message to {u}".format(u=req_username)
 
 if __name__ == '__main__':
         app.run(debug=True)
