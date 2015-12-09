@@ -31,7 +31,7 @@ RUN pip install -r /evetime_server/requirements.txt
 EXPOSE 80
 
 # Set the default directory where CMD will execute
-WORKDIR /evetime-server
+WORKDIR /evetime_server
 
 # Set the default command to execute
 # when creating a new container
