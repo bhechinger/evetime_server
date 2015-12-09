@@ -25,7 +25,7 @@ RUN apt-get install -y python python-dev python-distribute python-pip python3 py
 ADD /evetime_server /evetime_server
 
 # Get pip to download and install requirements:
-RUN pip install -r /everime_server/requirements.txt
+RUN pip install -r /evetime_server/requirements.txt
 
 # Expose ports
 EXPOSE 80
