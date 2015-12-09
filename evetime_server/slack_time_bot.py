@@ -7,7 +7,7 @@ from datetime import datetime
 #from pytz import timezone
 import pytz, argparse, configparser, locale
 
-locale.setlocale(locale.LC_ALL, 'en_US.utf8')
+locale.setlocale(locale.LC_ALL, 'C.UTF-8')
 app = Flask(__name__)
 
 parser = argparse.ArgumentParser(description='Send time in UTC plus conversion to requesting user\'s timezone')
