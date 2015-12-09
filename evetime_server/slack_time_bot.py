@@ -5,7 +5,12 @@ from slacker import Slacker
 from pprint import pprint
 from datetime import datetime
 #from pytz import timezone
-import pytz, argparse, configparser, locale
+import pytz, argparse, locale
+
+try:
+    import configparser
+except ImportError:
+    import ConfigParser as configparser
 
 locale.setlocale(locale.LC_ALL, 'C.UTF-8')
 app = Flask(__name__)
