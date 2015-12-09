@@ -7,7 +7,7 @@ from datetime import datetime
 #from pytz import timezone
 import pytz, argparse, configparser, locale
 
-locale.setlocale(locale.LC_ALL, 'en_US')
+locale.setlocale(locale.LC_ALL, 'en_US.utf8')
 app = Flask(__name__)
 
 parser = argparse.ArgumentParser(description='Send time in UTC plus conversion to requesting user\'s timezone')
@@ -18,7 +18,7 @@ args = parser.parse_args()
 if args.config:
     config_file = args.config
 else:
-    config_file = 'slack.conf'
+    config_file = '/var/www/eve-slack/slack.conf'
 
 config = configparser.ConfigParser()
 config.read(config_file)
@@ -51,7 +51,7 @@ def time_bot(req_username, req_channel):
         fmt = "%H:%M"
     else:
         utc_dt = datetime.utcnow()
-        fmt = "%a, %d %b %Y %X"
+        fmt = "%Y-%m-%d %H:%M:%S"
 
     for user in users:
         if user['name'] == req_username:
@@ -63,7 +63,7 @@ def time_bot(req_username, req_channel):
                     user_tz = pytz.timezone(req_tz)
                     dest_tz = req_tz
                 else:
-                    slack.chat.post_message('#{channel}'.format(channel=req_channel), '@{name}: Invalid time zone: {tz}'.format(name=user['name'], tz=req_tz, username=bot_name, icon_url=bot_icon))
+                    slack.chat.post_message('#{channel}'.format(channel=req_channel), '@{name}: Invalid time zone: {tz}'.format(name=user['name'], tz=req_tz), username=bot_name, icon_url=bot_icon)
                     return "Sent error message to {u}".format(u=req_username)
 
             utc_dt = pytz.utc.localize(utc_dt)
