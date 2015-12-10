@@ -22,16 +22,16 @@ RUN apt-get install -y tar git curl nano wget dialog net-tools build-essential
 RUN apt-get install -y python python-dev python-distribute python-pip python3 python3-dev python3-pip
 
 # Copy the application folder inside the container
-ADD /evetime_server /evetime_server
+ADD /app /app
 
 # Get pip to download and install requirements:
-RUN pip install -r /evetime_server/requirements.txt
+RUN pip install -r /app/requirements.txt
 
 # Expose ports
 EXPOSE 80
 
 # Set the default directory where CMD will execute
-WORKDIR /evetime_server
+WORKDIR /app
 
 # Set the default command to execute
 # when creating a new container
