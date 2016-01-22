@@ -38,11 +38,7 @@ slack = Slacker(api_key)
 def index():
     return "Nothing to see here, move along!"
 
-@app.route('/time_bot')
-def time_bot_def():
-    return "Please RTFM"
-
-@app.route('/time_bot/<req_username>/<req_channel>')
+@app.route('/<req_username>/<req_channel>')
 def time_bot(req_username, req_channel):
     # Get users list
     response = slack.users.list()
