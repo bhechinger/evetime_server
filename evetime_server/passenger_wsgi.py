@@ -1,1 +1,1 @@
-from evetime_server import app as application
+from slack_time_bot import app as application
