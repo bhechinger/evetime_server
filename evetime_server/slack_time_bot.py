@@ -12,7 +12,7 @@ try:
 except ImportError:
     import ConfigParser as configparser
 
-locale.setlocale(locale.LC_ALL, 'C.UTF-8')
+locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')
 app = Flask(__name__)
 
 parser = argparse.ArgumentParser(description='Send time in UTC plus conversion to requesting user\'s timezone')
