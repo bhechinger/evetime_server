@@ -23,7 +23,7 @@ args = parser.parse_args()
 if args.config:
     config_file = args.config
 else:
-    config_file = '/config/slack.conf'
+    config_file = '/home/app/config/slack.conf'
 
 config = configparser.ConfigParser()
 config.read(config_file)
